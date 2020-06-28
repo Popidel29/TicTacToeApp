@@ -9,6 +9,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    var noPlayer : Int = 0
+    var activePlayer = 1
+    var buttonClicked = 0
+
+    var board = Array(3){Array(3){noPlayer} }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -17,97 +23,83 @@ class MainActivity : AppCompatActivity() {
     fun btnClick(view: View) {
         val btnSelected = view as Button
 
-        var cellId = 0
         when (btnSelected) {
-            btn1 -> cellId = 1
-            btn2 -> cellId = 2
-            btn3 -> cellId = 3
-            btn4 -> cellId = 4
-            btn5 -> cellId = 5
-            btn6 -> cellId = 6
-            btn7 -> cellId = 7
-            btn8 -> cellId = 8
-            btn9 -> cellId = 9
+            btn1 -> board[0][0] =  activePlayer
+            btn2 -> board[0][1] =  activePlayer
+            btn3 -> board[0][2] =  activePlayer
+            btn4 -> board[1][0] =  activePlayer
+            btn5 -> board[1][1] =  activePlayer
+            btn6 -> board[1][2] =  activePlayer
+            btn7 -> board[2][0] =  activePlayer
+            btn8 -> board[2][1] =  activePlayer
+            btn9 -> board[2][2] =  activePlayer
         }
         buttonClicked ++
-        playGame(btnSelected, cellId)
+        playGame(btnSelected)
     }
 
-    var activePlayer = 1
-    var player1 = ArrayList<Int>()
-    var player2 = ArrayList<Int>()
-
-    var buttonClicked = 0
-
-    private fun playGame(btnSelected: Button, cellId: Int) {
+    private fun playGame(btnSelected: Button) {
         if (activePlayer == 1) {
             btnSelected.text = "X"
             btnSelected.setBackgroundResource(R.color.green)
-            player1.add(cellId)
-            activePlayer = 2
         } else {
             btnSelected.text = "O"
             btnSelected.setBackgroundResource(R.color.red)
-            player2.add(cellId)
-            activePlayer = 1
         }
         btnSelected.isEnabled = false
 
         checkWinner()
+        switchPlayer()
+
+
+    }
+    fun switchPlayer(){
+        if(activePlayer == 1){
+            activePlayer = 2
+        }else{
+            activePlayer = 1
+        }
     }
 
     fun checkWinner() {
         var winner = -1
-        //row
-        if (player1.contains(1) && player1.contains(2) && player1.contains(3)) {
-            winner = 1
 
+        //check row
+        for(i in 0..2){
+           if(board[i][0] == board[i][1] && board[i][1] == board[i][2]){
+               winner = board[i][0]
+               break
+           }
         }
-        if (player2.contains(1) && player2.contains(2) && player2.contains(3)) {
-            winner = 2
+
+        //check col
+        for(i in 0..2){
+            if(board[0][i] == board[1][i] && board[1][i] == board[2][i]){
+                winner = board[1][i]
+                break
+            }
         }
-        if (player1.contains(4) && player1.contains(5) && player1.contains(6)) {
-            winner = 1
+
+        //check diagonal
+        var aux = board[0][0]
+        for(i in 1..2){
+            if(aux != board[i][i])
+            {
+                break
+            }
+            if (i == 2) {
+                winner = aux
+            }
         }
-        if (player2.contains(4) && player2.contains(5) && player2.contains(6)) {
-            winner = 2
-        }
-        if (player1.contains(7) && player1.contains(8) && player1.contains(9)) {
-            winner = 1
-        }
-        if (player2.contains(7) && player2.contains(8) && player2.contains(9)) {
-            winner = 2
-        }
-        //col
-        if (player1.contains(1) && player1.contains(4) && player1.contains(7)) {
-            winner = 1
-        }
-        if (player2.contains(1) && player2.contains(4) && player2.contains(7)) {
-            winner = 2
-        }
-        if (player1.contains(2) && player1.contains(5) && player1.contains(8)) {
-            winner = 1
-        }
-        if (player2.contains(2) && player2.contains(5) && player2.contains(8)) {
-            winner = 2
-        }
-        if (player1.contains(3) && player1.contains(6) && player1.contains(9)) {
-            winner = 1
-        }
-        if (player2.contains(3) && player2.contains(6) && player2.contains(9)) {
-            winner = 2
-        }
-        if (player1.contains(1) && player1.contains(5) && player1.contains(9)) {
-            winner = 1
-        }
-        if (player2.contains(1) && player2.contains(5) && player2.contains(9)) {
-            winner = 2
-        }
-        if (player1.contains(3) && player1.contains(5) && player1.contains(7)) {
-            winner = 1
-        }
-        if (player2.contains(3) && player2.contains(5) && player2.contains(7)) {
-            winner = 2
+        //check anti- diagonal
+        aux = board[0][2]
+        for(i in 1..2){
+            if (board[i][2 -i] != aux) {
+                break
+            }
+            if (i == 2) {
+                winner = aux
+            }
         }
 
         if (winner == 1) {
