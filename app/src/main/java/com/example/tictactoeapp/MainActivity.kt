@@ -81,24 +81,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         //check diagonal
-        var aux = board[0][0]
         for(i in 1..2){
-            if(aux != board[i][i])
+            if(board[0][0] != board[i][i])
             {
                 break
             }
             if (i == 2) {
-                winner = aux
+                winner = board[0][0]
             }
         }
         //check anti- diagonal
-        aux = board[0][2]
         for(i in 1..2){
-            if (board[i][2 -i] != aux) {
+            if (board[i][2 -i] != board[0][2]) {
                 break
             }
             if (i == 2) {
-                winner = aux
+                winner = board[0][2]
             }
         }
 
